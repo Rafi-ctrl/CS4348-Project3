@@ -6,3 +6,7 @@ Plan for this session
 - Create devlog.md with this initial planning entry.
 - Create an empty project3.py file and set up a basic CLI that accepts commands but doesn’t implement them yet.
 - Push the initial commit to my GitHub repo (Rafi-ctrl/cs4348-project3).
+
+
+2025-12-10 – Added starter CLI structure
+Created project3.py with placeholder command handlers for all required commands (create, insert, search, load, print, extract). Next step: implement binary file structure for the index file (header block and node blocks).
