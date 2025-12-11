@@ -402,4 +402,74 @@ def cmd_load(idx_path, csv_path):
 
 
 def cmd_print(idx_path):
-    bt = BTreeFile(idx_pa_
+    bt = BTreeFile(idx_path)
+    try:
+        bt.inorder_traverse(lambda k, v: print(f"{k} {v}"))
+    finally:
+        bt.close()
+
+
+def cmd_extract(idx_path, out_csv):
+    if os.path.exists(out_csv):
+        raise RuntimeError("Output file exists")
+    bt = BTreeFile(idx_path)
+    try:
+        with open(out_csv, "w", newline="") as f:
+            writer = csv.writer(f)
+            bt.inorder_traverse(lambda k, v: writer.writerow([k, v]))
+    finally:
+        bt.close()
+
+
+# -------------------------
+# CLI dispatcher
+# -------------------------
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: project3 <command> [args...]", file=sys.stderr)
+        sys.exit(1)
+
+    cmd = sys.argv[1]
+
+    try:
+        if cmd == "create":
+            if len(sys.argv) != 3:
+                raise RuntimeError("Usage: project3 create <indexfile>")
+            cmd_create(sys.argv[2])
+
+        elif cmd == "insert":
+            if len(sys.argv) != 5:
+                raise RuntimeError("Usage: project3 insert <indexfile> <key> <value>")
+            cmd_insert(sys.argv[2], sys.argv[3], sys.argv[4])
+
+        elif cmd == "search":
+            if len(sys.argv) != 4:
+                raise RuntimeError("Usage: project3 search <indexfile> <key>")
+            cmd_search(sys.argv[2], sys.argv[3])
+
+        elif cmd == "load":
+            if len(sys.argv) != 4:
+                raise RuntimeError("Usage: project3 load <indexfile> <csvfile>")
+            cmd_load(sys.argv[2], sys.argv[3])
+
+        elif cmd == "print":
+            if len(sys.argv) != 3:
+                raise RuntimeError("Usage: project3 print <indexfile>")
+            cmd_print(sys.argv[2])
+
+        elif cmd == "extract":
+            if len(sys.argv) != 4:
+                raise RuntimeError("Usage: project3 extract <indexfile> <csvfile>")
+            cmd_extract(sys.argv[2], sys.argv[3])
+
+        else:
+            raise RuntimeError(f"Unknown command: {cmd}")
+
+    except (RuntimeError, FileNotFoundError, FileExistsError, ValueError, IOError) as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
